@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+     <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <h1>OTP less authentication</h1>
+    <div class="login-box">
+
+    <input
+        type="tel"
+        id="mobileNumber"
+        placeholder="Enter Mobile Number">
+
+    <button id="verifyBtn">
+        Verify using SNA
+    </button>
+
+</div>
+<script
+    id="otpless-sdk"
+    src="https://otpless.com/v4/headless.js"
+    data-appid="K82YZQR9UYJ7416LF0TO">
+</script>
+<script src="./js/app.js"></script>
+</body>
+</html>
