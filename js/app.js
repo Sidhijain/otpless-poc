@@ -10,36 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Response Type:", response.responseType);
 
         // Uncomment this while debugging on mobile
-        // alert(JSON.stringify(response, null, 2));
+        alert(JSON.stringify(response, null, 2));
 
-        switch (response.responseType) {
-
-            case "SUCCESS":
-
-                console.log("✅ Authentication Successful");
-                console.log("Token:", response.token);
-
-                // Save token if required
-                sessionStorage.setItem("otplessToken", response.token);
-
-                // Redirect to success page
-                window.location.href = "success.html";
-                break;
-
-            case "FAILED":
-
-                console.error("❌ Authentication Failed");
-                console.error(response);
-
-                alert("Authentication Failed");
-                break;
-
-            default:
-
-                console.log("ℹ️ Intermediate Callback");
-                console.log(response);
-                break;
-        }
+       
     };
 
     // Initialize OTPLESS SDK
@@ -51,28 +24,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const verifyBtn = document.getElementById("verifyBtn");
 
     verifyBtn.addEventListener("click", phoneAuth);
+    document
+    .getElementById("sendOtpBtn")
+    .addEventListener("click", phoneAuth);
+
+document
+    .getElementById("verifyOtpBtn")
+    .addEventListener("click", verifyOTP);
 
 });
 
 // Function to start authentication
 function phoneAuth() {
 
-    const phoneInput = document.getElementById("mobileNumber");
-    const phone = phoneInput.value.trim();
-
-    if (!phone) {
-        alert("Please enter a mobile number.");
-        phoneInput.focus();
-        return;
-    }
-
-    if (!/^\d{10}$/.test(phone)) {
-        alert("Please enter a valid 10-digit mobile number.");
-        phoneInput.focus();
-        return;
-    }
-
-    console.log("Starting authentication for:", phone);
+    const phone = document
+        .getElementById("mobileNumber")
+        .value
+        .trim();
 
     OTPlessSignin.initiate({
         channel: "PHONE",
@@ -80,4 +48,25 @@ function phoneAuth() {
         countryCode: "+91"
     });
 
+    // Show OTP section
+    document.getElementById("otpSection").style.display = "block";
+}
+function verifyOTP() {
+
+    const phone = document
+        .getElementById("mobileNumber")
+        .value
+        .trim();
+
+    const otp = document
+        .getElementById("otpInput")
+        .value
+        .trim();
+
+    OTPlessSignin.verify({
+        channel: "PHONE",
+        phone: phone,
+        otp: otp,
+        countryCode: "+91"
+    });
 }
