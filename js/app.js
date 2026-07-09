@@ -4,79 +4,80 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // OTPLESS callback
     const callback = async (event) => {
-
+        alert("EVENT: " + event.responseType);
         showDebug("Callback Received", event);
+        console.log(event);
+
+        // switch (event.responseType) {
     
-        switch (event.responseType) {
+        //     case "INITIATE":
     
-            case "INITIATE":
+        //         showDebug("INITIATE", event);
+        //         break;
     
-                showDebug("INITIATE", event);
-                break;
+        //     case "OTP_AUTO_READ":
     
-            case "OTP_AUTO_READ":
+        //         showDebug("OTP_AUTO_READ", event);
     
-                showDebug("OTP_AUTO_READ", event);
+        //         const otp = event.response?.otp;
     
-                const otp = event.response?.otp;
+        //         if (otp) {
     
-                if (otp) {
+        //             showDebug("OTP Found", otp);
     
-                    showDebug("OTP Found", otp);
+        //             const phone = document
+        //                 .getElementById("mobileNumber")
+        //                 .value
+        //                 .trim();
     
-                    const phone = document
-                        .getElementById("mobileNumber")
-                        .value
-                        .trim();
+        //             const result = await OTPlessSignin.verify({
+        //                 channel: "PHONE",
+        //                 phone: phone,
+        //                 countryCode: "+91",
+        //                 otp: otp
+        //             });
     
-                    const result = await OTPlessSignin.verify({
-                        channel: "PHONE",
-                        phone: phone,
-                        countryCode: "+91",
-                        otp: otp
-                    });
+        //             showDebug("Verify Result", result);
     
-                    showDebug("Verify Result", result);
+        //         }
     
-                }
+        //         break;
     
-                break;
+        //     case "VERIFY":
     
-            case "VERIFY":
+        //         showDebug("VERIFY", event);
+        //         break;
     
-                showDebug("VERIFY", event);
-                break;
+        //     case "ONETAP":
     
-            case "ONETAP":
+        //         showDebug("ONETAP SUCCESS", event);
     
-                showDebug("ONETAP SUCCESS", event);
+        //         setTimeout(() => {
+        //             window.location.href = "success.html";
+        //         }, 3000);
     
-                setTimeout(() => {
-                    window.location.href = "success.html";
-                }, 3000);
+        //         break;
     
-                break;
+        //     case "FAILED":
     
-            case "FAILED":
+        //         showDebug("FAILED", event);
+        //         break;
     
-                showDebug("FAILED", event);
-                break;
+        //     case "FALLBACK_TRIGGERED":
     
-            case "FALLBACK_TRIGGERED":
+        //         showDebug("FALLBACK_TRIGGERED", event);
     
-                showDebug("FALLBACK_TRIGGERED", event);
+        //         document
+        //             .getElementById("otpSection")
+        //             .style.display = "block";
     
-                document
-                    .getElementById("otpSection")
-                    .style.display = "block";
+        //         break;
     
-                break;
+        //     default:
     
-            default:
+        //         showDebug("UNKNOWN EVENT", event);
     
-                showDebug("UNKNOWN EVENT", event);
-    
-        }
+        // }
     
     };
     // Initialize SDK
