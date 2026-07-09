@@ -1,61 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-     <link rel="stylesheet" href="./css/style.css">
-</head>
-<body>
-    <h1>OTP less authentication</h1>
-    <div class="login-box">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <input
-        type="tel"
-        id="mobileNumber"
-        placeholder="Enter Mobile Number">
+    <title>OTPLESS POC</title>
 
-    <button id="verifyBtn">
-        Verify using SNA
-    </button>
-    <div id="otpSection" style="display:none; margin-top:20px;">
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="card">
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/3059/3059518.png"
+          class="logo"
+          alt="OTP"
+        />
+
+        <h2>OTPLESS Authentication</h2>
+
+        <p class="subtitle">Silent Network Authentication / OTP Verification</p>
 
         <input
-            type="text"
-            id="otpInput"
-            placeholder="Enter OTP"
-            maxlength="6"
-            autocomplete="one-time-code">
+          id="mobileNumber"
+          type="tel"
+          placeholder="Enter Mobile Number"
+          maxlength="10"
+        />
 
-        <button id="verifyOtpBtn">
-            Verify OTP
-        </button>
+        <button id="verifyBtn">Verify</button>
 
+        <div id="status" class="status">Waiting...</div>
+      </div>
     </div>
-    <div
-    id="debugBox"
-    style="
-        margin-top:20px;
-        padding:15px;
-        border:1px solid #000;
-        background:#f8f8f8;
-        white-space:pre-wrap;
-        word-break:break-word;
-        font-size:14px;
-    ">
-    Waiting for events...
-</div>
-</div>
-<script
-    id="otpless-sdk"
-    src="https://otpless.com/v4/headless.js"
-    data-appid="K82YZQR9UYJ7416LF0TO">
-</script>
-<script>
-window.addEventListener("load", () => {
-    console.log("OTPless =", window.OTPless);
-});
-</script>
-<script src="./js/app.js"></script>
-</body>
+
+    <script
+      id="otpless-sdk"
+      src="https://otpless.com/v4/headless.js"
+      data-appid="K82YZQR9UYJ7416LF0TO"
+    ></script>
+
+    <script src="./js/app.js"></script>
+  </body>
 </html>

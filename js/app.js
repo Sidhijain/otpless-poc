@@ -1,176 +1,57 @@
 let OTPlessSignin;
 
+const statusBox = () => document.getElementById("status");
+
+function updateStatus(title, data = "") {
+  statusBox().innerHTML =
+    "<strong>" +
+    title +
+    "</strong><br><br>" +
+    (typeof data === "string" ? data : JSON.stringify(data, null, 2));
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+  const callback = (event) => {
+    console.log(event);
 
-    // OTPLESS callback
-    const callback = async (event) => {
+    updateStatus(event.responseType || "Callback", event);
 
-        showDebug(event.responseType, event);
-        console.log(event);
-    
-        switch (event.responseType) {
-    
-            case "OTP_AUTO_READ":
-    
-                const otp = event.response?.otp;
-    
-                alert("OTP AUTO READ : " + otp);
-    
-                break;
-    
-            case "VERIFY":
-    
-                alert("VERIFY");
-                break;
-    
-            case "ONETAP":
-    
-                alert("SUCCESS");
-    
-                window.location.href = "success.html";
-    
-                break;
-    
-            case "FAILED":
-    
-                alert(JSON.stringify(event.response));
-                break;
-        }
-    
-    };
-    // Initialize SDK
+    if (event.responseType === "ONETAP") {
+      setTimeout(() => {
+        location.href = "success.html";
+      }, 1500);
+    }
+  };
 
+  OTPlessSignin = new OTPless(callback);
 
-    OTPlessSignin = new OTPless(callback);
-
-
-    console.log("OTPLESS SDK Ready");
-
-    // Send OTP
-    document
-        .getElementById("verifyBtn")
-        .addEventListener("click", phoneAuth);
-
-    // Verify OTP
-    document
-        .getElementById("verifyOtpBtn")
-        .addEventListener("click", verifyOTP);
-
+  document.getElementById("verifyBtn").addEventListener("click", initiateAuth);
 });
 
+async function initiateAuth() {
+  const phone = document.getElementById("mobileNumber").value.trim();
 
-// Send OTP
-async function phoneAuth() {
+  if (!phone) {
+    alert("Enter Mobile Number");
 
-    const phone = document
-        .getElementById("mobileNumber")
-        .value
-        .trim();
+    return;
+  }
 
-    if (!phone) {
-        alert("Please enter mobile number");
-        return;
-    }
+  updateStatus("Initiating Authentication...");
 
-    try {
+  try {
+    const result = await OTPlessSignin.initiate({
+      channel: "PHONE",
 
-        console.log("Sending OTP...");
+      phone,
 
-        const result = await OTPlessSignin.initiate({
-            channel: "PHONE",
-            phone: phone,
-            countryCode: "+91"
-        });
-        showDebug("Initiate Result", result);
+      countryCode: "+91",
+    });
 
-        alert(result.responseType);
-        console.log("Initiate Result");
-        console.log(result);
+    updateStatus("INITIATE", result);
+  } catch (error) {
+    console.error(error);
 
-        if (result.success) {
-
-            alert("OTP Sent Successfully");
-
-          
-
-        } else {
-
-            alert(
-                result?.response?.errorMessage ||
-                "Unable to send OTP"
-            );
-
-        }
-
-    } catch (error) {
-
-        console.error(error);
-        alert("Error while sending OTP");
-
-    }
-
-}
-
-
-// Verify OTP
-async function verifyOTP() {
-
-    const phone = document
-        .getElementById("mobileNumber")
-        .value
-        .trim();
-
-    const otp = 5
-
-    if (!otp) {
-        alert("Please enter OTP");
-        return;
-    }
-
-    try {
-
-        console.log("Verifying OTP...");
-
-        const result = await OTPlessSignin.verify({
-            channel: "PHONE",
-            phone: phone,
-            otp: otp,
-            countryCode: "+91"
-        });
-
-        console.log("Verify Result");
-        console.log(result);
-
-        if (result.success) {
-
-            alert("OTP Verified Successfully");
-
-
-        } else {
-
-            alert(
-                result?.response?.errorMessage ||
-                "Invalid OTP"
-            );
-
-        }
-
-    } catch (error) {
-
-        console.error(error);
-        alert("Error while verifying OTP");
-
-    }
-
-}
-function showDebug(title, data = "") {
-
-    const debugBox = document.getElementById("debugBox");
-
-    debugBox.innerHTML =
-        "<h3>" + title + "</h3><pre>" +
-        (typeof data === "string"
-            ? data
-            : JSON.stringify(data, null, 2)) +
-        "</pre>";
+    updateStatus("ERROR", error);
+  }
 }
