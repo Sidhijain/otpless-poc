@@ -3,36 +3,67 @@ let OTPlessSignin;
 document.addEventListener("DOMContentLoaded", () => {
 
     // OTPLESS callback
-    const callback = (response) => {
+    const callback = async (event) => {
 
         console.log("========== OTPLESS CALLBACK ==========");
-        console.log(response);
-
-        // Uncomment for debugging
-        // alert(JSON.stringify(response, null, 2));
-
-        if (response.responseType === "SUCCESS") {
-
-            console.log("Authentication Successful");
-            console.log(response);
-
-            sessionStorage.setItem(
-                "otplessResponse",
-                JSON.stringify(response)
-            );
-
-            window.location.href = "success.html";
+        console.log(event);
+    
+        switch (event.responseType) {
+    
+            case "OTP_AUTO_READ":
+    
+                console.log("OTP Auto Read");
+    
+                const otp = event.response?.otp;
+    
+                if (otp) {
+    
+                    console.log("Auto OTP:", otp);
+    
+                    const phone = document
+                        .getElementById("mobileNumber")
+                        .value
+                        .trim();
+    
+                    const result = await OTPlessSignin.verify({
+                        channel: "PHONE",
+                        phone: phone,
+                        countryCode: "+91",
+                        otp: otp
+                    });
+    
+                    console.log("Verify Result:", result);
+                }
+    
+                break;
+    
+            case "ONETAP":
+    
+                console.log("Authentication Successful");
+    
+                window.location.href = "success.html";
+    
+                break;
+    
+            case "FAILED":
+    
+                console.error(event.response);
+    
+                break;
+    
+            case "FALLBACK_TRIGGERED":
+    
+                console.log("Fallback Triggered");
+    
+                break;
+    
+            default:
+    
+                console.log(event);
+    
         }
-
-        if (response.responseType === "FAILED") {
-
-            console.error("Authentication Failed");
-            console.error(response);
-
-            alert("Authentication Failed");
-        }
+    
     };
-
     // Initialize SDK
     OTPlessSignin = new OTPless(callback);
 
