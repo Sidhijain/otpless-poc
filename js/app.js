@@ -2,56 +2,110 @@ let OTPlessSignin;
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    // OTPLESS Callback
+    // OTPLESS callback
     const callback = (response) => {
 
         console.log("========== OTPLESS CALLBACK ==========");
         console.log(response);
-        console.log("Response Type:", response.responseType);
 
-        // Uncomment this while debugging on mobile
-        alert(JSON.stringify(response, null, 2));
+        // Uncomment for debugging
+        // alert(JSON.stringify(response, null, 2));
 
-       
+        if (response.responseType === "SUCCESS") {
+
+            console.log("Authentication Successful");
+            console.log(response);
+
+            sessionStorage.setItem(
+                "otplessResponse",
+                JSON.stringify(response)
+            );
+
+            window.location.href = "success.html";
+        }
+
+        if (response.responseType === "FAILED") {
+
+            console.error("Authentication Failed");
+            console.error(response);
+
+            alert("Authentication Failed");
+        }
     };
 
-    // Initialize OTPLESS SDK
+    // Initialize SDK
     OTPlessSignin = new OTPless(callback);
 
     console.log("OTPLESS SDK Ready");
 
-    // Button Click Event
-    const verifyBtn = document.getElementById("verifyBtn");
-
-    verifyBtn.addEventListener("click", phoneAuth);
+    // Send OTP
     document
-    .getElementById("sendOtpBtn")
-    .addEventListener("click", phoneAuth);
+        .getElementById("verifyBtn")
+        .addEventListener("click", phoneAuth);
 
-document
-    .getElementById("verifyOtpBtn")
-    .addEventListener("click", verifyOTP);
+    // Verify OTP
+    document
+        .getElementById("verifyOtpBtn")
+        .addEventListener("click", verifyOTP);
 
 });
 
-// Function to start authentication
-function phoneAuth() {
+
+// Send OTP
+async function phoneAuth() {
 
     const phone = document
         .getElementById("mobileNumber")
         .value
         .trim();
 
-    OTPlessSignin.initiate({
-        channel: "PHONE",
-        phone: phone,
-        countryCode: "+91"
-    });
+    if (!phone) {
+        alert("Please enter mobile number");
+        return;
+    }
 
-    // Show OTP section
-    document.getElementById("otpSection").style.display = "block";
+    try {
+
+        console.log("Sending OTP...");
+
+        const result = await OTPlessSignin.initiate({
+            channel: "PHONE",
+            phone: phone,
+            countryCode: "+91"
+        });
+
+        console.log("Initiate Result");
+        console.log(result);
+
+        if (result.success) {
+
+            alert("OTP Sent Successfully");
+
+            document
+                .getElementById("otpSection")
+                .style.display = "block";
+
+        } else {
+
+            alert(
+                result?.response?.errorMessage ||
+                "Unable to send OTP"
+            );
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+        alert("Error while sending OTP");
+
+    }
+
 }
-function verifyOTP() {
+
+
+// Verify OTP
+async function verifyOTP() {
 
     const phone = document
         .getElementById("mobileNumber")
@@ -63,10 +117,45 @@ function verifyOTP() {
         .value
         .trim();
 
-    OTPlessSignin.verify({
-        channel: "PHONE",
-        phone: phone,
-        otp: otp,
-        countryCode: "+91"
-    });
+    if (!otp) {
+        alert("Please enter OTP");
+        return;
+    }
+
+    try {
+
+        console.log("Verifying OTP...");
+
+        const result = await OTPlessSignin.verify({
+            channel: "PHONE",
+            phone: phone,
+            otp: otp,
+            countryCode: "+91"
+        });
+
+        console.log("Verify Result");
+        console.log(result);
+
+        if (result.success) {
+
+            alert("OTP Verified Successfully");
+
+            window.location.href = "success.html";
+
+        } else {
+
+            alert(
+                result?.response?.errorMessage ||
+                "Invalid OTP"
+            );
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+        alert("Error while verifying OTP");
+
+    }
+
 }
