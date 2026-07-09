@@ -4,80 +4,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // OTPLESS callback
     const callback = async (event) => {
-        alert("EVENT: " + event.responseType);
-        showDebug("Callback Received", event);
-        console.log(event);
 
-        // switch (event.responseType) {
+        showDebug(event.responseType, event);
+        console.log(event);
     
-        //     case "INITIATE":
+        switch (event.responseType) {
     
-        //         showDebug("INITIATE", event);
-        //         break;
+            case "OTP_AUTO_READ":
     
-        //     case "OTP_AUTO_READ":
+                const otp = event.response?.otp;
     
-        //         showDebug("OTP_AUTO_READ", event);
+                alert("OTP AUTO READ : " + otp);
     
-        //         const otp = event.response?.otp;
+                break;
     
-        //         if (otp) {
+            case "VERIFY":
     
-        //             showDebug("OTP Found", otp);
+                alert("VERIFY");
+                break;
     
-        //             const phone = document
-        //                 .getElementById("mobileNumber")
-        //                 .value
-        //                 .trim();
+            case "ONETAP":
     
-        //             const result = await OTPlessSignin.verify({
-        //                 channel: "PHONE",
-        //                 phone: phone,
-        //                 countryCode: "+91",
-        //                 otp: otp
-        //             });
+                alert("SUCCESS");
     
-        //             showDebug("Verify Result", result);
+                window.location.href = "success.html";
     
-        //         }
+                break;
     
-        //         break;
+            case "FAILED":
     
-        //     case "VERIFY":
-    
-        //         showDebug("VERIFY", event);
-        //         break;
-    
-        //     case "ONETAP":
-    
-        //         showDebug("ONETAP SUCCESS", event);
-    
-        //         setTimeout(() => {
-        //             window.location.href = "success.html";
-        //         }, 3000);
-    
-        //         break;
-    
-        //     case "FAILED":
-    
-        //         showDebug("FAILED", event);
-        //         break;
-    
-        //     case "FALLBACK_TRIGGERED":
-    
-        //         showDebug("FALLBACK_TRIGGERED", event);
-    
-        //         document
-        //             .getElementById("otpSection")
-        //             .style.display = "block";
-    
-        //         break;
-    
-        //     default:
-    
-        //         showDebug("UNKNOWN EVENT", event);
-    
-        // }
+                alert(JSON.stringify(event.response));
+                break;
+        }
     
     };
     // Initialize SDK
@@ -162,10 +120,7 @@ async function verifyOTP() {
         .value
         .trim();
 
-    const otp = document
-        .getElementById("otpInput")
-        .value
-        .trim();
+    const otp = 5
 
     if (!otp) {
         alert("Please enter OTP");
