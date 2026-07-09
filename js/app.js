@@ -80,7 +80,19 @@ document.addEventListener("DOMContentLoaded", () => {
     
     };
     // Initialize SDK
-    OTPlessSignin = new OTPless(callback);
+    alert("Creating OTPLESS instance");
+
+OTPlessSignin = new OTPless((event)=>{
+
+    alert("CALLBACK");
+
+    showDebug("CALLBACK",event);
+
+    console.log(event);
+
+});
+
+alert("OTPLESS Created");
 
     console.log("OTPLESS SDK Ready");
 
@@ -119,7 +131,9 @@ async function phoneAuth() {
             phone: phone,
             countryCode: "+91"
         });
+        showDebug("Initiate Result", result);
 
+        alert(result.responseType);
         console.log("Initiate Result");
         console.log(result);
 
@@ -127,9 +141,7 @@ async function phoneAuth() {
 
             alert("OTP Sent Successfully");
 
-            document
-                .getElementById("otpSection")
-                .style.display = "block";
+          
 
         } else {
 
@@ -186,7 +198,6 @@ async function verifyOTP() {
 
             alert("OTP Verified Successfully");
 
-            window.location.href = "success.html";
 
         } else {
 
@@ -216,79 +227,3 @@ function showDebug(title, data = "") {
             : JSON.stringify(data, null, 2)) +
         "</pre>";
 }
-const callback = async (event) => {
-
-    showDebug("Callback Received", event);
-
-    switch (event.responseType) {
-
-        case "INITIATE":
-
-            showDebug("INITIATE", event);
-            break;
-
-        case "OTP_AUTO_READ":
-
-            showDebug("OTP_AUTO_READ", event);
-
-            const otp = event.response?.otp;
-
-            if (otp) {
-
-                showDebug("OTP Found", otp);
-
-                const phone = document
-                    .getElementById("mobileNumber")
-                    .value
-                    .trim();
-
-                const result = await OTPlessSignin.verify({
-                    channel: "PHONE",
-                    phone: phone,
-                    countryCode: "+91",
-                    otp: otp
-                });
-
-                showDebug("Verify Result", result);
-
-            }
-
-            break;
-
-        case "VERIFY":
-
-            showDebug("VERIFY", event);
-            break;
-
-        case "ONETAP":
-
-            showDebug("ONETAP SUCCESS", event);
-
-            setTimeout(() => {
-                window.location.href = "success.html";
-            }, 3000);
-
-            break;
-
-        case "FAILED":
-
-            showDebug("FAILED", event);
-            break;
-
-        case "FALLBACK_TRIGGERED":
-
-            showDebug("FALLBACK_TRIGGERED", event);
-
-            document
-                .getElementById("otpSection")
-                .style.display = "block";
-
-            break;
-
-        default:
-
-            showDebug("UNKNOWN EVENT", event);
-
-    }
-
-};
