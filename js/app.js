@@ -5,20 +5,24 @@ document.addEventListener("DOMContentLoaded", () => {
     // OTPLESS callback
     const callback = async (event) => {
 
-        console.log("========== OTPLESS CALLBACK ==========");
-        console.log(event);
+        showDebug("Callback Received", event);
     
         switch (event.responseType) {
     
+            case "INITIATE":
+    
+                showDebug("INITIATE", event);
+                break;
+    
             case "OTP_AUTO_READ":
     
-                console.log("OTP Auto Read");
+                showDebug("OTP_AUTO_READ", event);
     
                 const otp = event.response?.otp;
     
                 if (otp) {
     
-                    console.log("Auto OTP:", otp);
+                    showDebug("OTP Found", otp);
     
                     const phone = document
                         .getElementById("mobileNumber")
@@ -32,34 +36,45 @@ document.addEventListener("DOMContentLoaded", () => {
                         otp: otp
                     });
     
-                    console.log("Verify Result:", result);
+                    showDebug("Verify Result", result);
+    
                 }
     
                 break;
     
+            case "VERIFY":
+    
+                showDebug("VERIFY", event);
+                break;
+    
             case "ONETAP":
     
-                console.log("Authentication Successful");
+                showDebug("ONETAP SUCCESS", event);
     
-                window.location.href = "success.html";
+                setTimeout(() => {
+                    window.location.href = "success.html";
+                }, 3000);
     
                 break;
     
             case "FAILED":
     
-                console.error(event.response);
-    
+                showDebug("FAILED", event);
                 break;
     
             case "FALLBACK_TRIGGERED":
     
-                console.log("Fallback Triggered");
+                showDebug("FALLBACK_TRIGGERED", event);
+    
+                document
+                    .getElementById("otpSection")
+                    .style.display = "block";
     
                 break;
     
             default:
     
-                console.log(event);
+                showDebug("UNKNOWN EVENT", event);
     
         }
     
@@ -190,3 +205,90 @@ async function verifyOTP() {
     }
 
 }
+function showDebug(title, data = "") {
+
+    const debugBox = document.getElementById("debugBox");
+
+    debugBox.innerHTML =
+        "<h3>" + title + "</h3><pre>" +
+        (typeof data === "string"
+            ? data
+            : JSON.stringify(data, null, 2)) +
+        "</pre>";
+}
+const callback = async (event) => {
+
+    showDebug("Callback Received", event);
+
+    switch (event.responseType) {
+
+        case "INITIATE":
+
+            showDebug("INITIATE", event);
+            break;
+
+        case "OTP_AUTO_READ":
+
+            showDebug("OTP_AUTO_READ", event);
+
+            const otp = event.response?.otp;
+
+            if (otp) {
+
+                showDebug("OTP Found", otp);
+
+                const phone = document
+                    .getElementById("mobileNumber")
+                    .value
+                    .trim();
+
+                const result = await OTPlessSignin.verify({
+                    channel: "PHONE",
+                    phone: phone,
+                    countryCode: "+91",
+                    otp: otp
+                });
+
+                showDebug("Verify Result", result);
+
+            }
+
+            break;
+
+        case "VERIFY":
+
+            showDebug("VERIFY", event);
+            break;
+
+        case "ONETAP":
+
+            showDebug("ONETAP SUCCESS", event);
+
+            setTimeout(() => {
+                window.location.href = "success.html";
+            }, 3000);
+
+            break;
+
+        case "FAILED":
+
+            showDebug("FAILED", event);
+            break;
+
+        case "FALLBACK_TRIGGERED":
+
+            showDebug("FALLBACK_TRIGGERED", event);
+
+            document
+                .getElementById("otpSection")
+                .style.display = "block";
+
+            break;
+
+        default:
+
+            showDebug("UNKNOWN EVENT", event);
+
+    }
+
+};
