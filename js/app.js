@@ -81,19 +81,10 @@ document.addEventListener("DOMContentLoaded", () => {
     
     };
     // Initialize SDK
-    alert("Creating OTPLESS instance");
 
-OTPlessSignin = new OTPless((event)=>{
 
-    alert("CALLBACK");
+    OTPlessSignin = new OTPless(callback);
 
-    showDebug("CALLBACK",event);
-
-    console.log(event);
-
-});
-
-alert("OTPLESS Created");
 
     console.log("OTPLESS SDK Ready");
 
