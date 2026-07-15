@@ -242,17 +242,14 @@ async function sendOTP() {
         .value
         .trim();
 
-    const result = await OTPlessSignin.initiate({
-
-        channel: "PHONE",
-
-        phone,
-
-        countryCode: "+91"
-
-    });
-
-    console.log(result);
+        const result = await OTPlessSignin.initiateWithFeedback({
+          channel: "PHONE",
+          phone,
+          countryCode: "+91"
+      });
+      
+      console.log(result);
+      console.log(JSON.stringify(result, null, 2));
 
     show(result);
 
