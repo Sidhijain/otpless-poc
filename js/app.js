@@ -125,7 +125,12 @@ function show(data) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-
+  window.addEventListener("message", (e) => {
+    alert("messgae recived");
+    console.log("========== WINDOW MESSAGE ==========");
+    console.log("Origin:", e.origin);
+    console.log("Data:", e.data);
+});
     const callback = (eventCallback) => {
 
         console.log("CALLBACK");
