@@ -129,7 +129,9 @@ document.addEventListener("DOMContentLoaded", () => {
     alert("messgae recived");
     console.log("========== WINDOW MESSAGE ==========");
     console.log("Origin:", e.origin);
+    alert(e.origin);
     console.log("Data:", e.data);
+    alert(e.data);
 });
     const callback = (eventCallback) => {
 
