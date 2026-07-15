@@ -1,7 +1,24 @@
 let OTPlessSignin;
 
 const statusBox = () => document.getElementById("status");
+if ("OTPCredential" in window) {
+  console.log("WebOTP supported");
 
+  navigator.credentials
+    .get({
+      otp: { transport: ["sms"] },
+    })
+    .then((otp) => {
+      console.log("WEB OTP SUCCESS");
+      console.log(otp);
+    })
+    .catch((err) => {
+      console.error("WEB OTP ERROR");
+      console.error(err);
+    });
+} else {
+  console.log("WebOTP NOT supported");
+}
 function updateStatus(title, data = "") {
   statusBox().innerHTML =
     "<strong>" +
@@ -73,6 +90,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   OTPlessSignin = new OTPless(callback);
   console.log("OTPlessSignin =", OTPlessSignin);
+  console.log("OTPless object", OTPlessSignin);
+console.log("window.otpless", window.otpless);
+console.log("callback registered");
 console.dir(OTPlessSignin);
 
 console.log("window.otpless =", window.otpless);
