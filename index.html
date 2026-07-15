@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -43,4 +43,71 @@
 
     <script src="./js/app.js"></script>
   </body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>OTPLESS Headless SDK</title>
+
+    <link rel="stylesheet" href="./css/style.css">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="card">
+
+            <h2>OTPLESS Headless SDK</h2>
+
+            <input
+                id="mobileNumber"
+                type="tel"
+                maxlength="10"
+                placeholder="Enter Mobile Number">
+
+            <button id="verifyBtn">
+                Send OTP
+            </button>
+
+            <div id="otpContainer" style="display:none;">
+
+                <input
+                    id="otpInput"
+                    type="text"
+                    maxlength="6"
+                    placeholder="Enter OTP">
+
+                <button id="verifyOtpBtn">
+                    Verify OTP
+                </button>
+
+            </div>
+
+            <pre id="status">
+Waiting...
+            </pre>
+
+        </div>
+
+    </div>
+
+    <script
+        id="otpless-sdk"
+        src="https://otpless.com/v4/headless.js"
+        data-appid="K82YZQR9UYJ7416LF0TO">
+    </script>
+
+    <script src="./js/app.js"></script>
+
+</body>
+
 </html>
