@@ -1,47 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<html>
+<body>
 
-    <title>OTPLESS POC</title>
+<h2>WebOTP Test</h2>
 
-    <link rel="stylesheet" href="./css/style.css" />
-  </head>
+<script>
+if ("OTPCredential" in window) {
+    console.log("WebOTP supported");
 
-  <body>
-    <div class="container">
-      <div class="card">
-        <img
-          src="https://cdn-icons-png.flaticon.com/512/3059/3059518.png"
-          class="logo"
-          alt="OTP"
-        />
+    navigator.credentials.get({
+        otp: { transport: ["sms"] }
+    }).then(otp => {
+        console.log("OTP RECEIVED");
+        console.log(otp);
+        alert(otp.code);
+    }).catch(err => {
+        console.error(err);
+    });
 
-        <h2>OTPLESS Authentication</h2>
+} else {
+    console.log("WebOTP NOT supported");
+}
+</script>
 
-        <p class="subtitle">Silent Network Authentication / OTP Verification</p>
-
-        <input
-          id="mobileNumber"
-          type="tel"
-          placeholder="Enter Mobile Number"
-          maxlength="10"
-        />
-
-        <button id="verifyBtn">Verify</button>
-
-        <div id="status" class="status">Waiting...</div>
-      </div>
-    </div>
-
-    <script
-      id="otpless-sdk"
-      src="https://otpless.com/v4/headless.js"
-      data-appid="K82YZQR9UYJ7416LF0TO"
-    ></script>
-
-    <script src="./js/app.js"></script>
-  </body>
-</html> 
-
+</body>
+</html>
