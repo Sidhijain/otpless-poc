@@ -1,125 +1,132 @@
 let OTPlessSignin;
 
 const statusBox = () => document.getElementById("status");
-if ("OTPCredential" in window) {
-  console.log("WebOTP supported");
 
-  navigator.credentials
-    .get({
-      otp: { transport: ["sms"] },
-    })
-    .then((otp) => {
-      console.log("WEB OTP SUCCESS");
-      console.log(otp);
-    })
-    .catch((err) => {
-      console.error("WEB OTP ERROR");
-      console.error(err);
-    });
-} else {
-  console.log("WebOTP NOT supported");
-}
 function updateStatus(title, data = "") {
   statusBox().innerHTML =
     "<strong>" +
     title +
     "</strong><br><br>" +
-    (typeof data === "string" ? data : JSON.stringify(data, null, 2));
+    (typeof data === "string"
+      ? data
+      : JSON.stringify(data, null, 2));
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("Inisde evenet listner");
-  // const callback = (event) => {
-  //   console.log("event",event);
-  //   updateStatus(event.responseType || "Callback", event);
-  //   if (event.responseType === "ONETAP") {
-  //     setTimeout(() => {
-  //       location.href = "success.html";
-  //     }, 1500);
-  //   }
-  // };
+  console.log("DOM Loaded");
+
   const callback = async (eventCallback) => {
-    console.log("========== CALLBACK ==========");
+    console.log("==================================");
+    console.log("OTPLESS CALLBACK RECEIVED");
     console.log(eventCallback);
-    alert(eventCallback.responseType);
-
-
-    console.log(eventCallback);
+    console.log("Response Type:", eventCallback.responseType);
 
     updateStatus(eventCallback.responseType, eventCallback);
 
-    const EVENTS_MAP = {
-      OTP_AUTO_READ: async () => {
-        console.log("OTP AUTO READ EVENT");
+    switch (eventCallback.responseType) {
+      case "OTP_AUTO_READ":
+        console.log("OTP_AUTO_READ EVENT");
+
+        try {
+          const otp = eventCallback.response?.otp;
+          console.log("OTP:", otp);
+
+          if (!otp) {
+            console.log("OTP not found in callback.");
+            return;
+          }
+
+          const phone = document
+            .getElementById("mobileNumber")
+            .value.trim();
+
+          console.log("Calling verify()...");
+
+          const result = await OTPlessSignin.verify({
+            channel: "PHONE",
+            phone,
+            countryCode: "+91",
+            otp,
+          });
+
+          console.log("VERIFY RESULT");
+          console.log(result);
+        } catch (err) {
+          console.error("VERIFY FAILED");
+          console.error(err);
+        }
+
+        break;
+
+      case "ONETAP":
+        console.log("ONETAP RECEIVED");
         console.log(eventCallback);
-        const otp = eventCallback.response?.otp;
 
-        alert("OTP AUTO READ : " + otp);
-
-        const phone = document.getElementById("mobileNumber").value.trim();
-
-        const result = await OTPlessSignin.verify({
-          channel: "PHONE",
-          phone,
-          countryCode: "+91",
-          otp,
-        });
-
-        console.log(result);
-      },
-
-      ONETAP() {
-        alert("SUCCESS");
+        alert("Authentication Successful");
 
         location.href = "success.html";
-      },
 
-      FAILED() {
-        alert(JSON.stringify(eventCallback.response));
-      },
+        break;
 
-      FALLBACK_TRIGGERED() {
-        alert("FALLBACK");
-      },
-    };
+      case "FAILED":
+        console.log("FAILED");
+        console.log(eventCallback);
 
-    if (eventCallback.responseType in EVENTS_MAP) {
-      EVENTS_MAP[eventCallback.responseType]();
+        alert("FAILED");
+
+        break;
+
+      case "FALLBACK_TRIGGERED":
+        console.log("FALLBACK_TRIGGERED");
+        console.log(eventCallback);
+
+        alert("Fallback Triggered");
+
+        break;
+
+      default:
+        console.log("UNKNOWN EVENT");
+        console.log(eventCallback);
     }
   };
 
   OTPlessSignin = new OTPless(callback);
-  console.log("OTPlessSignin =", OTPlessSignin);
-  console.log("OTPless object", OTPlessSignin);
-console.log("window.otpless", window.otpless);
-console.log("callback registered");
-console.dir(OTPlessSignin);
 
-console.log("window.otpless =", window.otpless);
-console.dir(window.otpless);
+  console.log("OTPlessSignin");
+  console.log(OTPlessSignin);
 
-  document.getElementById("verifyBtn").addEventListener("click", initiateAuth);
+  document
+    .getElementById("verifyBtn")
+    .addEventListener("click", initiateAuth);
 });
 
 async function initiateAuth() {
   const phone = document.getElementById("mobileNumber").value.trim();
+
   if (!phone) {
     alert("Enter Mobile Number");
     return;
   }
+
+  console.log("Calling initiate()");
+
   updateStatus("Initiating Authentication...");
+
   try {
     const result = await OTPlessSignin.initiate({
       channel: "PHONE",
       phone,
       countryCode: "+91",
     });
+
+    console.log("INITIATE RESULT");
+    console.log(result);
+
     updateStatus("INITIATE", result);
   } catch (error) {
+    console.error("INITIATE ERROR");
     console.error(error);
 
     updateStatus("ERROR", error);
   }
 }
-
-
